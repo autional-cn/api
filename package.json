@@ -1,0 +1,8 @@
+{
+  "name": "autional-cn-api",
+  "private": true,
+  "description": "api.autional.cn — Vercel reverse-proxy entry for the .cn backend",
+  "dependencies": {
+    "@vercel/config": "^0.7.2"
+  }
+}

@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/bff/:path*", "destination": "https://api.autional.tianv.mobi/_cn/bff/:path*" },
-    { "source": "/api/v1/:path*", "destination": "https://api.autional.tianv.mobi/_cn/api/v1/:path*" },
-    { "source": "/oauth/:path*", "destination": "https://api.autional.tianv.mobi/_cn/oauth/:path*" },
-    { "source": "/.well-known/:path*", "destination": "https://api.autional.tianv.mobi/_cn/.well-known/:path*" }
-  ]
-}
