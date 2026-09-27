@@ -6,6 +6,9 @@ import { routes, type VercelConfig } from '@vercel/config/v1';
  * 值 **不写入本仓**，取自 Vercel 项目环境变量 `API_ORIGIN`
  * （Project -> Settings -> Environment Variables）。
  * 未设置时 **故意抛错**（fail-closed），避免静默产出坏路由。
+ *
+ * 过渡期：`API_ORIGIN=https://cn.autional.tianv.mobi`（唯一的 tianv.mobi 桥，**可退役**）；
+ * ICP 备案后可改为 `https://api.autional.cn` 直连并删除本代理项目（见部署计划 D13）。
  */
 const rawOrigin = process.env.API_ORIGIN;
 
@@ -18,14 +21,14 @@ if (!rawOrigin) {
 const ORIGIN = rawOrigin.replace(/\/+$/, '');
 
 /**
- * 4 条 rewrite：把对外入口的路径，加上 `/_cn/` 前缀后转发到内部源站。
- * `/_cn/` 是 ingress 用来把流量分给独立 .cn 实例的标记（ingress 会去掉前缀）。
+ * 4 条 rewrite：把对外入口的路径原样转发到源站（**无路径前缀**）。
+ * 环境区分由“源站域名”承担（`cn.<...>` = `.cn` 环境），不再使用 `/_cn/` 路径前缀。
  */
 export const config: VercelConfig = {
   rewrites: [
-    routes.rewrite('/bff/:path*', `${ORIGIN}/_cn/bff/:path*`),
-    routes.rewrite('/api/v1/:path*', `${ORIGIN}/_cn/api/v1/:path*`),
-    routes.rewrite('/oauth/:path*', `${ORIGIN}/_cn/oauth/:path*`),
-    routes.rewrite('/.well-known/:path*', `${ORIGIN}/_cn/.well-known/:path*`),
+    routes.rewrite('/bff/:path*', `${ORIGIN}/bff/:path*`),
+    routes.rewrite('/api/v1/:path*', `${ORIGIN}/api/v1/:path*`),
+    routes.rewrite('/oauth/:path*', `${ORIGIN}/oauth/:path*`),
+    routes.rewrite('/.well-known/:path*', `${ORIGIN}/.well-known/:path*`),
   ],
 };
