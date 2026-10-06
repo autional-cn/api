@@ -21,7 +21,7 @@
 
 | 文件 | 说明 |
 |---|---|
-| `vercel.ts` | 4 条 rewrite：`/bff`、`/api/v1`、`/oauth`、`/.well-known` -> `${API_ORIGIN}/...` |
+| `vercel.ts` | 6 条 rewrite：`/bff`、`/api/v1`、`/oauth`、`/.well-known` -> `${API_ORIGIN}/...` |
 | `package.json` | 仅依赖 `@vercel/config`（`vercel.ts` 的运行时/类型） |
 | `public/index.html` | 根路径占位页（`noindex`）；API 端点不在根路径 |
 | `LICENSE` | AGPL-3.0（与 `autional-cn/*` 一致） |
@@ -49,3 +49,11 @@
 
 - 设计依据：`AUTIONAL-CN-DEPLOY-PLAN.md`（单一后端入口 + 环境级源站域名选路）
 - 执行/运维记录：`AUTIONAL-CN-DEPLOY-EXECUTION-LOG.md`
+
+## per-tenant discovery rewrite 约定（2026-10-06）
+
+- 形如 `/<slug>/.well-known/<path>` 的转发，**不要**用 path-to-regexp 的「首段动态参数 + `:path*`」写法
+  （`routes.rewrite('/:slug/.well-known/:path*', ...)`）——**本环境实测 Vercel 不匹配**，一律 404。
+- **正确写法 = 正则源 + 反向引用**：
+  `routes.rewrite('^/([^/]+)/[.]well-known/(.*)$', `${ORIGIN}/$1/.well-known/$2`)`
+- 根级协议坐标仍用普通前缀匹配：`routes.rewrite('/.well-known/:path*', ...)`。
