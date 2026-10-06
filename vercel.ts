@@ -37,6 +37,6 @@ export const config: VercelConfig = {
     routes.rewrite('/oauth/:path*', `${ORIGIN}/oauth/:path*`, withIssuer),
     routes.rewrite('/ready', `${ORIGIN}/ready`, withIssuer),
     routes.rewrite('/.well-known/:path*', `${ORIGIN}/.well-known/:path*`, withIssuer),
-    routes.rewrite('/:slug/.well-known/:path*', `${ORIGIN}/:slug/.well-known/:path*`),
+    routes.rewrite('^/([^/]+)/[.]well-known/(.*)$', `${ORIGIN}/$1/.well-known/$2`),
   ],
 };
