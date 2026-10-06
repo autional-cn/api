@@ -25,14 +25,17 @@ const ISSUER = 'https://api.autional.cn';
 const withIssuer = () => ({ requestHeaders: { 'X-Autional-Issuer': ISSUER } });
 
 /**
- * 4 条 rewrite：把对外入口的路径原样转发到源站（**无路径前缀**）。
+ * 6 条 rewrite：把对外入口的路径原样转发到源站（**无路径前缀**）。
  * 环境区分由“源站域名”承担（`cn.<...>` = `.cn` 环境），不再使用 `/_cn/` 路径前缀。
+ * `/ready`：status 站网关健康聚合探针（站点侧 rewrite 指到 api.autional.cn/ready，
+ * 缺此条则打回 Vercel 404 —— status 内容审计 V-01 的代理断点）。
  */
 export const config: VercelConfig = {
   rewrites: [
     routes.rewrite('/bff/:path*', `${ORIGIN}/bff/:path*`, withIssuer),
     routes.rewrite('/api/v1/:path*', `${ORIGIN}/api/v1/:path*`, withIssuer),
     routes.rewrite('/oauth/:path*', `${ORIGIN}/oauth/:path*`, withIssuer),
+    routes.rewrite('/ready', `${ORIGIN}/ready`, withIssuer),
     routes.rewrite('/.well-known/:path*', `${ORIGIN}/.well-known/:path*`, withIssuer),
     routes.rewrite('/:slug/.well-known/:path*', `${ORIGIN}/:slug/.well-known/:path*`),
   ],
